@@ -24,3 +24,6 @@ A REST based web chat program using C++
 
 ## Go to your VM URL/namesCpp/namelookup.html
 # chatApp
+
+##Grant Mirror:
+## http://18.116.8.156/restChat/restChat.html#
