@@ -22,7 +22,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Kenyon</a>
+          <a class="nav-link active" aria-current="page" href="https://cs.kenyon.edu/index.php/scmp318-software-development/lab-2-chat-full-featured/">Kenyon</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -39,6 +39,7 @@
         </li>
       </ul>
       <span id=register>
+	  <!-- Buttons for Register and Login -->
       <form id="register" class="d-flex">
         <input class="form-control me-2" type="text" id="yourname" placeholder="Username" aria-label="User">
         <input class="form-control me-2" type="password" id="yourpass" placeholder="Password" aria-label="User">
@@ -55,24 +56,46 @@
   </div>
 </nav>
 
-<div class="container">
-    <h1>A Microservice based chat system!</h1>
-    <span id="status">
-      Chat Members: 
-      <span id="members"></span>
-    </span>
-    <p>
-
-	
-    <h2>Chat box</h2>
-    <div class="scrollabletextbox" id="chatBox"></div>
-    <span id="chatinput">
-    <textarea id="message" class="form-control" rows="1" cols="60" placeholder="message"></textarea><br />
-    <input type="button" value="Send" id="send-btn" /></p>
-    </span>
+<!-- Loading Spinner -->
+<div class="loading">
+  <div class="spinner">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+  </div>
 </div>
 
-<!-- Login Modal -->
+
+
+<!-- Chat Box and Output of Users -->
+<!-- https://getbootstrap.com/docs/4.1/layout/grid/ -->
+<div class="container">
+	<div class = "row">
+		<div class="col">
+			<h1>A Microservice based chat system!</h1>
+
+			<p>
+			<h2>Chat box</h2>
+			<div class="scrollabletextbox" id="chatBox"></div>
+			<span id="chatinput">
+			<textarea id="message" class="form-control" rows="1" cols="60" placeholder="message"></textarea><br />
+			<input type="button" value="Send" id="send-btn" /></p>
+			</span>
+		</div>
+		<div class="col">
+			<span id="status">
+			  <p class="text-center">Chat Members</p>
+			  <span id="members">
+			  <p id = "userlist" class="text-center"> </p>
+			  </span>
+			</span>
+		</div>
+	</div>
+</div>
+
+<!-- Registration Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -82,26 +105,27 @@
       </div>
       <div class="modal-body mx-3">
         <div class="md-form mb-5">
+		<!-- Registration Form Inputs -->
           <i class="fas fa-user prefix grey-text"></i>
-          <input type="text" id="orangeForm-name" class="form-control validate">
+          <input type="text" id="user-name" class="form-control validate">
           <label data-error="wrong" data-success="right" for="orangeForm-name">Your name</label>
         </div>
         <div class="md-form mb-5">
           <i class="fas fa-envelope prefix grey-text"></i>
-          <input type="email" id="orangeForm-email" class="form-control validate">
+          <input type="email" id="user-email" class="form-control validate">
           <label data-error="wrong" data-success="right" for="orangeForm-email">Your email</label>
         </div>
 
         <div class="md-form mb-4">
           <i class="fas fa-lock prefix grey-text"></i>
-          <input type="password" id="orangeForm-pass" class="form-control validate">
+          <input type="password" id="user-password" class="form-control validate">
           <label data-error="wrong" data-success="right" for="orangeForm-pass">Your password</label>
         </div>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" id = "submitButton" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>

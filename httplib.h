@@ -289,6 +289,7 @@ namespace detail {
  *
  */
 
+
 template <class T, class... Args>
 typename std::enable_if<!std::is_array<T>::value, std::unique_ptr<T>>::type
 make_unique(Args &&...args) {

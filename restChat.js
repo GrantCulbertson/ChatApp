@@ -2,7 +2,7 @@
 // Jim Skon 2022
 // Kenyon College
 
-var baseUrl = 'http://3.134.78.249:5005';
+var baseUrl = 'http://18.116.8.156:5005';
 var state="off";
 var myname="";
 var inthandle;
@@ -19,7 +19,6 @@ document.getElementById('login-btn').addEventListener("click", (e) => {
 /* Set up buttons */
 document.getElementById('leave-btn').addEventListener("click", leaveSession);
 document.getElementById('send-btn').addEventListener("click", sendText);
-
 // Watch for enter on message box
 document.getElementById('message').addEventListener("keydown", (e)=> {
     if (e.code == "Enter") {
@@ -34,19 +33,23 @@ window.onbeforeunload = leaveSession;
 
 function completeJoin(results) {
 	var status = results['status'];
+	console.log(status)
 	if (status != "success") {
-		alert("Username already exists!");
+		alert("Account Not Found");
 		leaveSession();
 		return;
 	}
 	var user = results['user'];
 	console.log("Join:"+user);
+	//https://stackoverflow.com/questions/3180710/javascript-change-p-content-depending-on-select-option
+	document.getElementById('userlist').innerHTML += user;
 	startSession(user);
 }
 
 function join() {
 	myname = document.getElementById('yourname').value;
-	fetch(baseUrl+'/chat/join/'+myname, {
+	mypass = document.getElementById('yourpass').value;
+	fetch(baseUrl+'/chat/join/'+myname+'/'+mypass, {
         method: 'get'
     })
     .then (response => response.json() )
@@ -68,6 +71,7 @@ function completeSend(results) {
 //function called on submit or enter on text input
 function sendText() {
     var message = document.getElementById('message').value;
+	document.getElementById('message').value = '';
     console.log("Send: "+myname+":"+message);
 	fetch(baseUrl+'/chat/send/'+myname+'/'+message, {
         method: 'get'
@@ -77,7 +81,7 @@ function sendText() {
     .catch(error => {
         {alert("Error: Something went wrong:"+error);}
     })    
-
+	
 }
 
 function completeFetch(result) {
@@ -98,7 +102,7 @@ function fetchMessage() {
     .then (response => response.json() )
     .then (data =>completeFetch(data))
     .catch(error => {
-        {console.log("Server appears down");}
+        {console.log("Server appears to be down");}
     })  	
 }
 /* Functions to set up visibility of sections of the display */
@@ -127,4 +131,38 @@ function leaveSession(){
 	clearInterval(inthandle);
 }
 
+//FUNCTIONS THAT I HAVE ADDED BELOW-------------------------------------------------------------------
+
+//functions to register a user , /chat/register/username/email/password
+document.getElementById('submitButton').addEventListener("click", registerUser);
+function registerUser(){
+	console.log("registerUser() running");
+	username = document.getElementById('user-name').value;
+	email = document.getElementById('user-email').value;
+	pass = document.getElementById('user-password').value;
+	fetch(baseUrl+'/chat/register/'+username +'/'+email+'/'+pass, {
+        method: 'get'
+    })
+    .then (response => response.json() )
+    .then (data =>completeRegisterUser(data))
+    .catch(error => {
+        {alert("Error: Something went wrong:"+error);}
+    })
+}
+
+function completeRegisterUser(results){
+	var status = results['status'];
+	console.log(status)
+	if (status != "success") {
+		alert("Username or Email already exists! Password must be more than 6 characters");
+		leaveSession();
+		return;
+	}
+	var user = results['user'];
+	alert("Registration Successful");
+	console.log("Registered:"+user);
+	username = document.getElementById('user-name').value = '';
+	email = document.getElementById('user-email').value = '';
+	pass = document.getElementById('user-password').value = '';
+}
 
