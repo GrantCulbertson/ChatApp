@@ -6,6 +6,7 @@ var baseUrl = 'http://18.116.8.156:5005';
 var state="off";
 var myname="";
 var inthandle;
+var inthandle2;
 
 /* Start with text input and status hidden */
 document.getElementById('chatinput').style.display = 'none';
@@ -42,7 +43,6 @@ function completeJoin(results) {
 	var user = results['user'];
 	console.log("Join:"+user);
 	//https://stackoverflow.com/questions/3180710/javascript-change-p-content-depending-on-select-option
-	document.getElementById('userlist').innerHTML += user;
 	startSession(user);
 }
 
@@ -103,25 +103,30 @@ function fetchMessage() {
     .then (data =>completeFetch(data))
     .catch(error => {
         {console.log("Server appears to be down");}
-    })  	
+    })
 }
 /* Functions to set up visibility of sections of the display */
+var nameHold;
 function startSession(name){
     state="on";
     
     document.getElementById('yourname').value = "";
     document.getElementById('register').style.display = 'none';
     document.getElementById('user').innerHTML = "User: " + name;
+	nameHold = name;
+	console.log(nameHold);
     document.getElementById('chatinput').style.display = 'block';
     document.getElementById('status').style.display = 'block';
     document.getElementById('leave').style.display = 'block';
     /* Check for messages every 500 ms */
     inthandle=setInterval(fetchMessage,500);
+	inthandle2=setInterval(getUsers,500);
+	
 }
 
 function leaveSession(){
     state="off";
-    
+    removeUser(nameHold);
     document.getElementById('yourname').value = "";
     document.getElementById('register').style.display = 'block';
     document.getElementById('user').innerHTML = "";
@@ -129,9 +134,47 @@ function leaveSession(){
     document.getElementById('status').style.display = 'none';
     document.getElementById('leave').style.display = 'none';
 	clearInterval(inthandle);
+	clearInterval(inthandle2);
 }
 
 //FUNCTIONS THAT I HAVE ADDED BELOW-------------------------------------------------------------------
+
+
+
+document.getElementById('invite-friend').addEventListener("click", sendEmail);
+//Invite someone via email
+    function sendEmail() {
+      Email.send({
+        Host: "smtp.gmail.com",
+        Username: "KenyonSoftwareDev@gmail.com",
+        Password: "hZtQKD5Bj9rUGy2!",
+        To: 'culbertson2@kenyon.edu',
+        From: "KenyonSoftwareDev@gmail.com",
+        Subject: "You have inherited a vast fortune CLICK HERE",
+        Body: "http://18.116.8.156/restChat/restChat.html",
+      })
+        .then(function (message) {
+          alert("mail sent successfully")
+        });
+    }
+	
+	
+
+//Functions to dynamically update user list
+function getUsers() {
+	fetch(baseUrl+'/chat/userlist', {
+        method: 'get'
+    })
+    .then (response => response.json() )
+    .then (data =>updateUsers(data))
+    .catch(error => {
+        {alert("Error: Something went wrong:"+error);}
+    })
+}
+function updateUsers(result) {
+	userList = result["userList"];
+	document.getElementById('userlist').innerHTML = userList;
+}
 
 //functions to register a user , /chat/register/username/email/password
 document.getElementById('submitButton').addEventListener("click", registerUser);
@@ -166,3 +209,9 @@ function completeRegisterUser(results){
 	pass = document.getElementById('user-password').value = '';
 }
 
+//Function to remove a user after they leave the site.
+function removeUser(){
+		fetch(baseUrl+'/chat/userlist/remove/'+nameHold, {
+        method: 'get'
+    })
+}	

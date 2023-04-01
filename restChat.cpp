@@ -9,6 +9,7 @@
 #include <fstream>
 #include <map>
 #include <algorithm>
+#include <string>
 #include "httplib.h"
 
 using namespace httplib;
@@ -31,6 +32,22 @@ class userData {       // The class
 };
 //CLASSES ABOVE-------------------------------------------------
 
+//Grab List of Usernames
+string getUserList(map<string, string> const &activeUsers){
+	string usernameList = "Users: ";
+    for (auto const &pair: activeUsers) {
+		usernameList += pair.first;
+		usernameList += ", ";
+    }
+	string jsonMessage = "{\"userList\":\""+usernameList+"\"}";
+	return jsonMessage;
+}
+
+//Remove someone from the active users list
+void removeUser(map<string, string> &activeUsers , string username){
+	activeUsers.erase(username);
+}
+
 
 void addMessage(string username, string message, map<string,vector<string>> &messageMap) {
 	/* iterate through users adding message to each */
@@ -40,6 +57,16 @@ void addMessage(string username, string message, map<string,vector<string>> &mes
 		messageMap[username].push_back(jsonMessage);
 	}
 }
+
+//This function will add a user to a userMap, with their username, email, and password in a json string.
+void addUser(string username, string password, string email, map<string,string> &userMap) {
+	/* iterate through users adding message to each */
+	string jsonMessage = "{\"user\":\""+username+"\",\"pass\":\""+password+"\",\"email\":\""+email+"\"}";
+	userMap[username] = jsonMessage;
+	cout << "addUser output: "<< userMap[username] << endl;
+}
+
+
 
 string getMessagesJSON(string username, map<string,vector<string>> &messageMap) {
 	/* retrieve json list of messages for this user */
@@ -55,15 +82,14 @@ string getMessagesJSON(string username, map<string,vector<string>> &messageMap) 
 	return result;
 }
 
- //Under this will be code to add someone to a bank of users.
-
 
 int main(void) {
   Server svr;
   int nextUser=0;
   map<string,vector<string>> messageMap;
-  map<string,vector<string>> userMap;
-  vector<string> userList;
+  map<string,string> userMap;
+  map<string,string> userEmail;
+  map<string,string> activeUsers;
 
 	
   /* "/" just returnsAPI name */
@@ -74,9 +100,9 @@ int main(void) {
   });
 
   //This is a test page
-  svr.Get("/newpage", [](const Request & /*req*/, Response &res) {
+  svr.Get("/secretpage", [](const Request & /*req*/, Response &res) {
     res.set_header("Access-Control-Allow-Origin","*");
-    res.set_content("This is a New API part", "text/plain");
+    res.set_content("You found the secret page 0_0", "text/plain");
   });
   
   //REGISTRATION: This Section should handle someone registering, /chat/register/username/email/password
@@ -93,21 +119,14 @@ int main(void) {
     if (messageMap.count(username) or messageMap.count(email) or password.length() < 7){
     	result = "{\"status\":\"registrationfailure\"}";
     } else {
-    	// Add user, email, and password to messages map
-    	messageMap[username]=empty;
-		messageMap[email]=empty;
-		messageMap[password]=empty;
+    	// Add users to various maps
+    	messageMap[username]= empty;
+		userEmail[username] = email;
+		addUser(username , password, email , userMap);
     	result = "{\"status\":\"success\",\"user\":\"" + username + "\",\"email\":\"" + email + "\",\"pass\":\"" + password + "\"}";
-		//Add user, email, and password to userClass.
-		Bob.name = username;
-		Bob.pass = password;
-		Bob.email = email;
-		//Add new user to a vector
-		userList.push_back(username);
 		//Output some stuff
 		cout << username << " registered" << endl;
-		nextUser += 1;
-		cout << "User Email: " << email << endl;
+		cout << "User Email: " << userEmail[username] << endl;
 
     }
     res.set_content(result, "text/json");
@@ -116,20 +135,24 @@ int main(void) {
   //This Section is the part of the API for logging in.
   svr.Get(R"(/chat/join/(.*)/(.*))", [&](const Request& req, Response& res) {
     res.set_header("Access-Control-Allow-Origin","*");
+	//cout<< "this is log in output" << endl;
     string username = req.matches[1];
 	string password = req.matches[2];
+	string email = userEmail[username];
+	string combined = "{\"user\":\""+username+"\",\"pass\":\""+password+"\",\"email\":\""+email+"\"}";
+	//cout<< combined << endl;
+	//cout<< testAgainst << endl;
     string result;
-    vector<string> empty;
-    
     // Check if user with this name and password exists
-    if (messageMap.count(username) and messageMap.count(password)) {
+    if (combined == userMap[username]){
     	result = "{\"status\":\"success\",\"user\":\"" + username + "\"}";
-		 cout << username << " joins" << endl;
-		 cout << messageMap.size() << endl;
+		activeUsers[username] = "this user is active";
+		cout << username << " joins" << endl;
     } else {
     	result = "{\"status\":\"failure\"}";
     }
     res.set_content(result, "text/json");
+	getUserList(userMap);
   });
 
   //This is the part of the API that handles sending messages.
@@ -147,6 +170,7 @@ int main(void) {
     res.set_content(result, "text/json");
   });
   
+ 
   //This part of the code grabs messages that are sent
    svr.Get(R"(/chat/fetch/(.*))", [&](const Request& req, Response& res) {
     string username = req.matches[1];
@@ -156,9 +180,18 @@ int main(void) {
   });
   
     //This part of the code grabs a list of users
-   svr.Get(R"(/chat/fetch/users)", [&](const Request& req, Response& res) {
+   svr.Get(R"(/chat/userlist)", [&](const Request& req, Response& res) {
     res.set_header("Access-Control-Allow-Origin","*");
-    res.set_content(userList, "text/plain");
+	string result;
+	result = getUserList(activeUsers);
+	res.set_content(result, "text/json");
+  });
+  
+      //This part of the code will remove a user from the active user list.
+   svr.Get(R"(/chat/userlist/remove/(.*))", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string username = req.matches[1];
+	removeUser(activeUsers , username);
   });
   
   //What comes out in the Linux Console:
