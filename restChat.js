@@ -128,7 +128,7 @@ function startSession(name){
     inthandle=setInterval(fetchMessage,500);
 	inthandle2=setInterval(getUsers,500);
 	inthandle3=setInterval(checkTyping,200);
-	inthandle3=setInterval(updateShowTyping,5000);
+	inthandle3=setInterval(updateShowTyping,200);
 }
 
 function leaveSession(){
@@ -150,31 +150,7 @@ function leaveSession(){
 
 
 
-document.getElementById('invite-friend').addEventListener("click", sendEmail);
-//Invite someone via email
-var smtpTransport = nodemailer.createTransport("SMTP",{
-host: "mail.smtp2go.com",
-port: 2525, // 8025, 587 and 25 can also be used.
-auth: {
-user: "culbertson2@kenyon.edu",
-pass: "CB9QtidSZXjjuSb"
-}
-});
 
-smtpTransport.sendMail({
-from: "kenyonsoftwaredev@gmail.com",
-to: "culbertsongrant@gmail.com",
-subject: "Your Subject",
-text: "It is a test message"
-}, function(error, response){
-if(error){
-console.log(error);
-}else{
-console.log("Message sent: " + response.message);
-}
-});
-	
-	
 
 //Functions to dynamically update user list
 function getUsers() {
@@ -232,6 +208,7 @@ function removeUser(){
     })
 }	
 
+let gateway = 0;
 //Functions to update the server as to whether someone is typing
 function checkTyping(){
 	var message = document.getElementById('message').value;
@@ -247,20 +224,80 @@ function updateTyping(){
 		fetch(baseUrl+'/chat/typing/update/'+nameHold, {
         method: 'get'
     })
+	gateway += 1;
+	console.log(gateway);
 	//console.log("User is Typing");
 }
 
 function removeTyping(){
+		gateway = 0;
 		fetch(baseUrl+'/chat/typing/remove/'+nameHold, {
         method: 'get'
 		})
+		console.log(gateway);
 	//console.log("User is not typing");
 }
 
 
 function updateShowTyping(){
+	if(gateway == 1){
 		fetch(baseUrl+'/chat/typingmessage/'+nameHold, {
         method: 'get'
     })
+		console.log(gateway);
+	}
 }
 
+//IMAGE DRAG AND DROP---------------------------------------
+function dragOverHandler(ev) {
+  console.log("File(s) in drop zone");
+
+  // Prevent default behavior (Prevent file from being opened)
+  ev.preventDefault();
+}
+
+function dropHandler(ev) {
+  console.log("File(s) dropped");
+
+  // Prevent default behavior (Prevent file from being opened)
+  ev.preventDefault();
+
+  if (ev.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    [...ev.dataTransfer.items].forEach((item, i) => {
+      // If dropped items aren't files, reject them
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        console.log(`… file[${i}].name = ${file.name}`);
+      }
+    });
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    [...ev.dataTransfer.files].forEach((file, i) => {
+      console.log(`… file[${i}].name = ${file.name}`);
+    });
+  }
+}
+
+function handleDrop(ev) {
+  ev.preventDefault();
+  let dt = ev.dataTransfer;
+  let files = dt.files;
+  handleFiles(files);
+}
+
+function handleFiles(files) {
+  ([...files]).forEach(uploadFile)
+}
+
+function uploadFile(file) {
+  let url = 'http://18.116.8.156:5005/chat/image/send';
+  let formData = new FormData()
+  formData.append('file', file)
+  fetch(url, {
+    method: 'POST',
+	body: formData
+  })
+  .then(() => { /* Done. Inform the user */ })
+  .catch(() => { /* Error. Inform the user */ })
+}

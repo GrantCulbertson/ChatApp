@@ -250,6 +250,13 @@ int main(void) {
 	res.set_content(result, "text/json");
   });
   
+//HANDLE IMAGES---------------------------
+    svr.Get(R"(/chat/image/send)", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string result;
+	res.set_content(result, "text/json");
+  });
+  
   //What comes out in the Linux Console:
   cout << "Server listening on port " << port << endl;
   cout << "Chat Time" << endl;
