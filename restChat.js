@@ -7,6 +7,9 @@ var state="off";
 var myname="";
 var inthandle;
 var inthandle2;
+var inthandle3;
+var inthandle4;
+
 
 /* Start with text input and status hidden */
 document.getElementById('chatinput').style.display = 'none';
@@ -61,6 +64,7 @@ function join() {
 
 function completeSend(results) {
 	var status = results['status'];
+	document.getElementById('message').value = '';
 	if (status == "success") {
 		console.log("Send succeeded")
 	} else {
@@ -83,6 +87,8 @@ function sendText() {
     })    
 	
 }
+
+
 
 function completeFetch(result) {
 	messages = result["messages"];
@@ -121,7 +127,8 @@ function startSession(name){
     /* Check for messages every 500 ms */
     inthandle=setInterval(fetchMessage,500);
 	inthandle2=setInterval(getUsers,500);
-	
+	inthandle3=setInterval(checkTyping,200);
+	inthandle3=setInterval(updateShowTyping,5000);
 }
 
 function leaveSession(){
@@ -135,6 +142,8 @@ function leaveSession(){
     document.getElementById('leave').style.display = 'none';
 	clearInterval(inthandle);
 	clearInterval(inthandle2);
+	clearInterval(inthandle3);
+	clearInterval(inthandle4);
 }
 
 //FUNCTIONS THAT I HAVE ADDED BELOW-------------------------------------------------------------------
@@ -143,20 +152,27 @@ function leaveSession(){
 
 document.getElementById('invite-friend').addEventListener("click", sendEmail);
 //Invite someone via email
-    function sendEmail() {
-      Email.send({
-        Host: "smtp.gmail.com",
-        Username: "KenyonSoftwareDev@gmail.com",
-        Password: "hZtQKD5Bj9rUGy2!",
-        To: 'culbertson2@kenyon.edu',
-        From: "KenyonSoftwareDev@gmail.com",
-        Subject: "You have inherited a vast fortune CLICK HERE",
-        Body: "http://18.116.8.156/restChat/restChat.html",
-      })
-        .then(function (message) {
-          alert("mail sent successfully")
-        });
-    }
+var smtpTransport = nodemailer.createTransport("SMTP",{
+host: "mail.smtp2go.com",
+port: 2525, // 8025, 587 and 25 can also be used.
+auth: {
+user: "culbertson2@kenyon.edu",
+pass: "CB9QtidSZXjjuSb"
+}
+});
+
+smtpTransport.sendMail({
+from: "kenyonsoftwaredev@gmail.com",
+to: "culbertsongrant@gmail.com",
+subject: "Your Subject",
+text: "It is a test message"
+}, function(error, response){
+if(error){
+console.log(error);
+}else{
+console.log("Message sent: " + response.message);
+}
+});
 	
 	
 
@@ -215,3 +231,36 @@ function removeUser(){
         method: 'get'
     })
 }	
+
+//Functions to update the server as to whether someone is typing
+function checkTyping(){
+	var message = document.getElementById('message').value;
+	//console.log(message);
+		if(message != ""){
+		updateTyping();
+	} else{
+		removeTyping();
+	}
+}
+
+function updateTyping(){
+		fetch(baseUrl+'/chat/typing/update/'+nameHold, {
+        method: 'get'
+    })
+	//console.log("User is Typing");
+}
+
+function removeTyping(){
+		fetch(baseUrl+'/chat/typing/remove/'+nameHold, {
+        method: 'get'
+		})
+	//console.log("User is not typing");
+}
+
+
+function updateShowTyping(){
+		fetch(baseUrl+'/chat/typingmessage/'+nameHold, {
+        method: 'get'
+    })
+}
+

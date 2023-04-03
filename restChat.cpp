@@ -17,20 +17,6 @@ using namespace std;
 
 const int port = 5005;
 
-//CLASSES HERE-------------------------------------------------
-class userClass {       // The class
-  public:           // Access specifier
-    string name;   // Attribute (Name)
-    string pass;  // Attribute (Password)
-    string email; // Attribute (Email)
-	vector<string> messages; //Vector of all messages
-};
-
-class userData {       // The class
-  public:           // Access specifier
-	vector<string> usernames; //Vector of all users
-};
-//CLASSES ABOVE-------------------------------------------------
 
 //Grab List of Usernames
 string getUserList(map<string, string> const &activeUsers){
@@ -49,6 +35,7 @@ void removeUser(map<string, string> &activeUsers , string username){
 }
 
 
+//Add a message to a user.
 void addMessage(string username, string message, map<string,vector<string>> &messageMap) {
 	/* iterate through users adding message to each */
 	string jsonMessage = "{\"user\":\""+username+"\",\"message\":\""+message+"\"}";
@@ -58,12 +45,48 @@ void addMessage(string username, string message, map<string,vector<string>> &mes
 	}
 }
 
+//Check if someone is typing and then show that they are.
+void showTyping(string currentUser , map<string,vector<string>> &messageMap , map<string, string> const &typingMap , map<string,string> const &isTypingMap){
+	cout << "Show Typing is Running" << currentUser << endl;
+	if(typingMap.count(currentUser)){
+		string message = "...";
+		addMessage(currentUser , message , messageMap);
+	}
+}
+
+//Grab List of People Typing
+void getTypersList(map<string, string> const &typingMap , map<string,vector<string>> &messageMap , map<string,string> const &isTypingMap){
+	string currentUser;
+	cout << "getTypersList() is running" << currentUser << endl;
+    for (auto const &pair: typingMap) {
+		currentUser = pair.first;
+		showTyping(currentUser , messageMap , typingMap , isTypingMap);
+    }
+}
+
+
+
 //This function will add a user to a userMap, with their username, email, and password in a json string.
 void addUser(string username, string password, string email, map<string,string> &userMap) {
 	/* iterate through users adding message to each */
 	string jsonMessage = "{\"user\":\""+username+"\",\"pass\":\""+password+"\",\"email\":\""+email+"\"}";
 	userMap[username] = jsonMessage;
 	cout << "addUser output: "<< userMap[username] << endl;
+}
+
+//Add someone to the active typers map
+void addTyper(string username, map<string,string> &typingMap , map<string,string> &isTypingMap){
+	string response = "yes";
+	string message = "...";
+	isTypingMap[username] = ".";
+	typingMap[username] = "{\"user\":\""+username+"\",\"typing\":\""+response+"\"}";
+}
+
+//Remove someone from the active typer map.
+void removeTyper(string username, map<string,string> &typingMap , map<string,string> &isTypingMap){
+	string message = "";
+	typingMap.erase(username);
+	isTypingMap[username] = "{\"user\":\""+username+"\",\"message\":\""+message+"\"}";
 }
 
 
@@ -79,6 +102,7 @@ string getMessagesJSON(string username, map<string,vector<string>> &messageMap) 
 	}
 	result += "]}";
 	messageMap[username].clear();
+	cout << "getMessagesJSON" << result << endl;
 	return result;
 }
 
@@ -87,9 +111,12 @@ int main(void) {
   Server svr;
   int nextUser=0;
   map<string,vector<string>> messageMap;
+  map<string,vector<string>> typingUsersMap;
   map<string,string> userMap;
   map<string,string> userEmail;
   map<string,string> activeUsers;
+  map<string,string> typingMap;
+  map<string,string> isTypingMap;
 
 	
   /* "/" just returnsAPI name */
@@ -113,8 +140,6 @@ int main(void) {
 	string password = req.matches[3];
     string result;
     vector<string> empty;
-		//Initalize a user object
-		userClass Bob;
     // Check if user with this name or email already exists, or if password is less than 6 characters.
     if (messageMap.count(username) or messageMap.count(email) or password.length() < 7){
     	result = "{\"status\":\"registrationfailure\"}";
@@ -187,11 +212,42 @@ int main(void) {
 	res.set_content(result, "text/json");
   });
   
-      //This part of the code will remove a user from the active user list.
+   //This part of the code will remove a user from the active user list.
    svr.Get(R"(/chat/userlist/remove/(.*))", [&](const Request& req, Response& res) {
     res.set_header("Access-Control-Allow-Origin","*");
 	string username = req.matches[1];
 	removeUser(activeUsers , username);
+  });
+  
+  //This part of the code will update whether someone is typing.
+     svr.Get(R"(/chat/typing/update/(.*))", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string username = req.matches[1];
+	addTyper(username , typingMap , isTypingMap);
+  });
+  
+   //This part of the code will remove someone from the typing map who is not typing.
+     svr.Get(R"(/chat/typing/remove/(.*))", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string username = req.matches[1];
+	removeTyper(username , typingMap , isTypingMap);
+  });
+ 
+    //This part of the code will return JSON of whether someone is typing
+     svr.Get(R"(/chat/typing/(.*))", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string username = req.matches[1];
+	string result = typingMap[username];
+	res.set_content(result, "text/json");
+  });
+  
+    //This part of the code will send ... for someone typing
+    svr.Get(R"(/chat/typingmessage/(.*))", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string username = req.matches[1];
+	string result = isTypingMap[username];
+	showTyping(username , messageMap , typingMap , isTypingMap);
+	res.set_content(result, "text/json");
   });
   
   //What comes out in the Linux Console:
