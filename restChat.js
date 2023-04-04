@@ -301,3 +301,25 @@ function uploadFile(file) {
   .then(() => { /* Done. Inform the user */ })
   .catch(() => { /* Error. Inform the user */ })
 }
+
+//SEND AN EMAIL--------------
+//https://kaustubh72.medium.com/send-e-mails-with-smtp-js-a8e07e1d0b6b
+//https://www.smtpjs.com/
+
+document.getElementById('sendEmailButton').addEventListener("click", sendEmail);
+function sendEmail(){
+let url = "http://18.116.8.156/restChat/restChat.html";
+let email = document.getElementById('friend-email').value;
+let body = document.getElementById('email-message').value + " " + url;
+console.log(email);
+Email.send({
+    Host : "smtp.elasticemail.com",
+    Username : "kenyonsoftwaredev@gmail.com",
+    Password : "375F1C624A4AA040B8B4E8BF48D81CD73E83",
+    To : email,
+    From : "kenyonsoftwaredev@gmail.com",
+    Subject : document.getElementById('email-subject').value,
+    Body : body
+})
+
+}

@@ -254,7 +254,7 @@ int main(void) {
     svr.Get(R"(/chat/image/send)", [&](const Request& req, Response& res) {
     res.set_header("Access-Control-Allow-Origin","*");
 	string result;
-	res.set_content(result, "text/json");
+	res.set_content(result, "image/jpg");
   });
   
   //What comes out in the Linux Console:
