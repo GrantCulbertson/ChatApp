@@ -9,6 +9,7 @@ var inthandle;
 var inthandle2;
 var inthandle3;
 var inthandle4;
+var inthandle5;
 
 
 /* Start with text input and status hidden */
@@ -128,7 +129,9 @@ function startSession(name){
     inthandle=setInterval(fetchMessage,500);
 	inthandle2=setInterval(getUsers,500);
 	inthandle3=setInterval(checkTyping,200);
-	inthandle3=setInterval(updateShowTyping,200);
+	inthandle4=setInterval(updateShowTyping,200);
+	inthandle5=setInterval(fetchUsers, 5000);
+
 }
 
 function leaveSession(){
@@ -144,6 +147,8 @@ function leaveSession(){
 	clearInterval(inthandle2);
 	clearInterval(inthandle3);
 	clearInterval(inthandle4);
+	clearInterval(inthandle5);
+
 }
 
 //FUNCTIONS THAT I HAVE ADDED BELOW-------------------------------------------------------------------
@@ -165,6 +170,7 @@ function getUsers() {
 }
 function updateUsers(result) {
 	userList = result["userList"];
+	console.log("user list printed");
 	document.getElementById('userlist').innerHTML = userList;
 }
 
@@ -225,7 +231,7 @@ function updateTyping(){
         method: 'get'
     })
 	gateway += 1;
-	console.log(gateway);
+	//console.log(gateway);
 	//console.log("User is Typing");
 }
 
@@ -234,7 +240,7 @@ function removeTyping(){
 		fetch(baseUrl+'/chat/typing/remove/'+nameHold, {
         method: 'get'
 		})
-		console.log(gateway);
+		//console.log(gateway);
 	//console.log("User is not typing");
 }
 
@@ -356,4 +362,3 @@ function fetchUsers() {
 }
 
 // Call fetchUsers every 5 seconds to update the user list
-setInterval(fetchUsers, 5000);

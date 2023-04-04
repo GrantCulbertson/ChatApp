@@ -102,7 +102,6 @@ string getMessagesJSON(string username, map<string,vector<string>> &messageMap) 
 	}
 	result += "]}";
 	messageMap[username].clear();
-	cout << "getMessagesJSON" << result << endl;
 	return result;
 }
 
@@ -250,12 +249,7 @@ int main(void) {
 	res.set_content(result, "text/json");
   });
   
-//HANDLE IMAGES---------------------------
-    svr.Get(R"(/chat/image/send)", [&](const Request& req, Response& res) {
-    res.set_header("Access-Control-Allow-Origin","*");
-	string result;
-	res.set_content(result, "image/jpg");
-  });
+
   
   //What comes out in the Linux Console:
   cout << "Server listening on port " << port << endl;
