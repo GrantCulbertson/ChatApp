@@ -323,3 +323,37 @@ Email.send({
 })
 
 }
+
+//Sammy//
+
+// NEW 
+function updateUsers(users) {
+    // Get the user list container element
+    const userList = document.getElementById('user-list');
+
+    // Clear any existing user list items
+    userList.innerHTML = '';
+
+    // Create a new list item for each user and append it to the user list
+    users.forEach((user) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = user;
+        userList.appendChild(listItem);
+    });
+}
+
+function fetchUsers() {
+    fetch(baseUrl+'/chat/users', {
+        method: 'get'
+    })
+    .then(response => response.json())
+    .then(data => {
+        updateUsers(data['users']);
+    })
+    .catch(error => {
+        console.log("Error fetching user list:", error);
+    });
+}
+
+// Call fetchUsers every 5 seconds to update the user list
+setInterval(fetchUsers, 5000);
