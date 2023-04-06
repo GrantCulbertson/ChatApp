@@ -34,8 +34,10 @@ string getUserListMod(map<string, string> const &activeUsers){
 	string usernameList;
     for (auto const &pair: activeUsers) {
 		usernameList += pair.first;
-		usernameList += ", ";
+		usernameList += ",";
     }
+	usernameList.erase(usernameList.length() - 1);
+	cout << usernameList << endl;
 	string jsonMessage = "{\"userList\":\""+usernameList+"\"}";
 	return jsonMessage;
 }

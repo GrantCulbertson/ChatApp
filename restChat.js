@@ -335,13 +335,16 @@ Email.send({
 // NEW 
 function updateUsersSam(data) {
 	console.log(data);
-	let users = data['userList'];
+	const users = data['userList'];
+	const usersArray = users.split(',');
+	console.log(usersArray);
+	console.log(users);
     // Get the user list container element
     const userBar = document.getElementById('user-list');
     // Clear any existing user list items
     userBar.innerHTML = '';
     // Create a new list item for each user and append it to the user list
-    users.forEach((user) => {
+    usersArray.forEach((user) => {
         const listItem = document.createElement('li');
         listItem.textContent = user;
         userBar.appendChild(listItem);
