@@ -130,7 +130,7 @@ function startSession(name){
 	inthandle2=setInterval(getUsers,500);
 	inthandle3=setInterval(checkTyping,200);
 	inthandle4=setInterval(updateShowTyping,200);
-	inthandle5 = setInterval(fetchUsers, 1000)
+	inthandle5 = setInterval(fetchUsers, 500)
 }
 
 function leaveSession(){
@@ -405,11 +405,11 @@ function updateUsersSam(data){
 				if(numGate != 0 && typerArray.includes(user) == true){
 					let userStatus = "Is typing...";
 					UpdateUsersSamNotTyping(user , listNum , userBar , userStatus);
-					listnum += "a";
+					listNum += "a";
 				}else{
 					let userStatus = "Online";
 					UpdateUsersSamNotTyping(user , listNum , userBar , userStatus);
-					listnum += "a";
+					listNum += "a";
 				}
 			}
 		}		
