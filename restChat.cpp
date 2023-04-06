@@ -30,24 +30,37 @@ string getUserList(map<string, string> const &activeUsers){
 	return jsonMessage;
 }
 
+string getUserListMod(map<string, string> const &activeUsers){
+	string usernameList;
+    for (auto const &pair: activeUsers) {
+		usernameList += pair.first;
+		usernameList += ", ";
+    }
+	string jsonMessage = "{\"userList\":\""+usernameList+"\"}";
+	return jsonMessage;
+}
+
 //Update users status if they are away or online -Sammy
-void updateStatus(std::vector<std::string>& usernameList, const std::vector<std::string>& activeUsers) {
-    for (auto& username : usernameList) {
+//void updateStatus(map<string, string> const &holdList, map<string, string> const &activeUsers) {
+//	vector<string> userList;
+//	string nameHold;
+//    for (auto const &pair: activeUsers) {
         // Check if user is currently active
-        auto it = std::find(activeUsers.begin(), activeUsers.end(), username);
-        if (it != activeUsers.end()) {
+//		nameHold = pair.first;
+//        if (5 == 5) {
             // User is active, so set status to "Online"
-            std::cout << username << " is online." << std::endl;
+ //           std::cout << nameHold << " is online." << std::endl;
+//			userList.push_back(nameHold);
             // Change user's status to "Online" (or update existing status)
             // ...
-        } else {
-            // User is not active, so set status to "Away"
-            std::cout << username << " is away." << std::endl;
+ //       } else {
+            // User is active, so set status to "Active"
+//            std::cout << nameHold << " is away." << std::endl;
             // Change user's status to "Away" (or update existing status)
             // ...
-        }
-    }
-}
+ //       }
+//    }
+//}
 
 //Remove someone from the active users list
 void removeUser(map<string, string> &activeUsers , string username){
@@ -131,6 +144,7 @@ int main(void) {
   int nextUser=0;
   map<string,vector<string>> messageMap;
   map<string,vector<string>> typingUsersMap;
+  map<string,vector<string>> holdList;
   map<string,string> userMap;
   map<string,string> userEmail;
   map<string,string> activeUsers;
@@ -266,6 +280,14 @@ int main(void) {
 	string username = req.matches[1];
 	string result = isTypingMap[username];
 	showTyping(username , messageMap , typingMap , isTypingMap);
+	res.set_content(result, "text/json");
+  });
+  
+      //This part of the code will update the user list for the thing at the bottom of the web page
+    svr.Get(R"(/chat/users)", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string result;
+	result = getUserListMod(activeUsers);
 	res.set_content(result, "text/json");
   });
   

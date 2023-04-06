@@ -170,7 +170,7 @@ function getUsers() {
 }
 function updateUsers(result) {
 	userList = result["userList"];
-	console.log("user list printed");
+	//console.log("user list printed");
 	document.getElementById('userlist').innerHTML = userList;
 }
 
@@ -333,18 +333,18 @@ Email.send({
 //Sammy//
 
 // NEW 
-function updateUsers(users) {
+function updateUsersSam(data) {
+	console.log(data);
+	let users = data['userList'];
     // Get the user list container element
-    const userList = document.getElementById('user-list');
-
+    const userBar = document.getElementById('user-list');
     // Clear any existing user list items
-    userList.innerHTML = '';
-
+    userBar.innerHTML = '';
     // Create a new list item for each user and append it to the user list
     users.forEach((user) => {
         const listItem = document.createElement('li');
         listItem.textContent = user;
-        userList.appendChild(listItem);
+        userBar.appendChild(listItem);
     });
 }
 
@@ -353,12 +353,9 @@ function fetchUsers() {
         method: 'get'
     })
     .then(response => response.json())
-    .then(data => {
-        updateUsers(data['users']);
-    })
+    .then(data => updateUsersSam(data))
     .catch(error => {
         console.log("Error fetching user list:", error);
     });
 }
-
 // Call fetchUsers every 5 seconds to update the user list
