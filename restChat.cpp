@@ -29,6 +29,25 @@ string getUserList(map<string, string> const &activeUsers){
 	return jsonMessage;
 }
 
+//Update users status if they are away or online -Sammy
+void updateStatus(std::vector<std::string>& usernameList, const std::vector<std::string>& activeUsers) {
+    for (auto& username : usernameList) {
+        // Check if user is currently active
+        auto it = std::find(activeUsers.begin(), activeUsers.end(), username);
+        if (it != activeUsers.end()) {
+            // User is active, so set status to "Online"
+            std::cout << username << " is online." << std::endl;
+            // Change user's status to "Online" (or update existing status)
+            // ...
+        } else {
+            // User is not active, so set status to "Away"
+            std::cout << username << " is away." << std::endl;
+            // Change user's status to "Away" (or update existing status)
+            // ...
+        }
+    }
+}
+
 //Remove someone from the active users list
 void removeUser(map<string, string> &activeUsers , string username){
 	activeUsers.erase(username);
