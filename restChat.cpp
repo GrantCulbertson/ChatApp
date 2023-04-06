@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <string>
 #include "httplib.h"
+#include <vector>
 
 using namespace httplib;
 using namespace std;
