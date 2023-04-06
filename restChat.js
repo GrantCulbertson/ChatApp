@@ -9,7 +9,7 @@ var inthandle;
 var inthandle2;
 var inthandle3;
 var inthandle4;
-var inthandle5;
+var inthandle5 = setInterval(fetchUsers, 1000);
 
 
 /* Start with text input and status hidden */
@@ -130,8 +130,7 @@ function startSession(name){
 	inthandle2=setInterval(getUsers,500);
 	inthandle3=setInterval(checkTyping,200);
 	inthandle4=setInterval(updateShowTyping,200);
-	inthandle5=setInterval(fetchUsers, 5000);
-
+	inthandle5 = setInterval(fetchUsers, 1000)
 }
 
 function leaveSession(){
@@ -333,23 +332,135 @@ Email.send({
 //Sammy//
 
 // NEW 
-function updateUsersSam(data) {
-	console.log(data);
+function updateUsersSam(data){
+	//console.log(data);
+	fetchTypers();
 	const users = data['userList'];
+	//Returning list like Grant,Sammy,Joe,etc. and then turning it into a javascript array.
+	//https://dev.to/sanchithasr/6-ways-to-convert-a-string-to-an-array-in-javascript-1cjg
+	//https://www.educative.io/answers/how-to-add-an-id-to-element-in-javascript
 	const usersArray = users.split(',');
-	console.log(usersArray);
 	console.log(users);
+	console.log(typerArray);
+	//console.log(usersArray);
     // Get the user list container element
-    const userBar = document.getElementById('user-list');
+    const userBar = document.getElementById('bottomPageList');
     // Clear any existing user list items
     userBar.innerHTML = '';
-    // Create a new list item for each user and append it to the user list
+	let numGate = 0;
+	let listNum = "a";
+    // Create a new list item for each user and append it to the user list, first user added will have blue background
     usersArray.forEach((user) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = user;
-        userBar.appendChild(listItem);
-    });
-}
+		if(typerArray == null){
+			if(numGate == 0){
+				const listItem = document.createElement('li');
+				//Set the Class of the list , then after set the ID and Text
+				listItem.classList.add('list-group-item');
+				listItem.classList.add('active');
+				listItem.setAttribute('id' , listNum);
+				listItem.textContent = user;
+				userBar.appendChild(listItem);
+				const spanItem = document.createElement('span');
+				//Set the Class of the Span in the list , then after set the Text
+				spanItem.classList.add('badge');
+				spanItem.classList.add('rounded-pill');
+				spanItem.classList.add('bg-success');
+				spanItem.textContent = "Online";
+				listItem.appendChild(spanItem);
+				numGate += 1;
+				listNum += "a";
+			}else{
+				const listItem = document.createElement('li');
+				listItem.classList.add('list-group-item');
+				listItem.setAttribute('id' , listNum);
+				listItem.textContent = user;
+				userBar.appendChild(listItem);
+				const spanItem = document.createElement('span');
+				spanItem.classList.add('badge');
+				spanItem.classList.add('rounded-pill');
+				spanItem.classList.add('bg-success');
+				spanItem.textContent = "Online";
+				listItem.appendChild(spanItem);
+				listNum += "a";
+			}
+		}else{
+			if(numGate == 0 && typerArray.includes(user) == true){
+				let userStatus = "Is typing...";
+				UpdateUsersSamTyping(user , listNum , userBar , userStatus);
+				numGate += 1;
+				listNum += "a";
+		}else{
+			if(numGate == 0 && typerArray.includes(user) == false){
+				let userStatus = "Online";
+				UpdateUsersSamTyping(user , listNum , userBar , userStatus);
+				numGate += 1;
+				listNum += "a";
+		}else{
+			if(numGate == 0 && typerArray.includes(user) == false){
+				let userStatus = "Is typing...";
+				UpdateUsersSamTyping(user , listNum , userBar , userStatus);
+				numGate += 1;
+				listNum += "a";
+			}else{
+				if(numGate != 0 && typerArray.includes(user) == true){
+					let userStatus = "Is typing...";
+					UpdateUsersSamNotTyping(user , listNum , userBar , userStatus);
+					listnum += "a";
+				}else{
+					let userStatus = "Online";
+					UpdateUsersSamNotTyping(user , listNum , userBar , userStatus);
+					listnum += "a";
+				}
+			}
+		}		
+	}
+}})};
+
+function UpdateUsersSamTyping(user , listNum , userBar , userStatus){
+			const listItem = document.createElement('li');
+			//Set the Class of the list , then after set the ID and Text
+			listItem.classList.add('list-group-item');
+			listItem.classList.add('active');
+			listItem.setAttribute('id' , listNum);
+			listItem.textContent = user;
+			userBar.appendChild(listItem);
+			const spanItem = document.createElement('span');
+			//Set the Class of the Span in the list , then after set the Text
+			if(userStatus == "Is typing..."){
+				spanItem.classList.add('badge');
+				spanItem.classList.add('rounded-pill');
+				spanItem.classList.add('bg-warning');
+				spanItem.classList.add('text-dark');					
+			}else{
+				spanItem.classList.add('badge');
+				spanItem.classList.add('rounded-pill');
+				spanItem.classList.add('bg-success');	
+			}
+			spanItem.textContent = userStatus;
+			listItem.appendChild(spanItem);
+};
+
+function UpdateUsersSamNotTyping(user , listNum , userBar , userStatus){
+			const listItem = document.createElement('li');
+			listItem.classList.add('list-group-item');
+			listItem.setAttribute('id' , listNum);
+			listItem.textContent = user;
+			userBar.appendChild(listItem);
+			const spanItem = document.createElement('span');
+			if(userStatus == "Is typing..."){
+				spanItem.classList.add('badge');
+				spanItem.classList.add('rounded-pill');
+				spanItem.classList.add('bg-warning');
+				spanItem.classList.add('text-dark');					
+			}else{
+				spanItem.classList.add('badge');
+				spanItem.classList.add('rounded-pill');
+				spanItem.classList.add('bg-success');	
+			}
+			spanItem.textContent = userStatus;
+			listItem.appendChild(spanItem);
+};
+
 
 function fetchUsers() {
     fetch(baseUrl+'/chat/users', {
@@ -362,3 +473,24 @@ function fetchUsers() {
     });
 }
 // Call fetchUsers every 5 seconds to update the user list
+
+function fetchTypers() {
+    fetch(baseUrl+'/chat/users/typing', {
+        method: 'get'
+    })
+    .then(response => response.json())
+    .then(data => makeTyperArray(data))
+    .catch(error => {
+        console.log("No users are typing so there is no JSON object to fetch", error);
+		typerArray = null;
+    });
+}
+
+var typerArray = "";
+function makeTyperArray(data){
+	console.log(data);
+	const users = data['typerList'];
+	//Returning list like Grant,Sammy,Joe,etc. and then turning it into a javascript array.
+	//https://dev.to/sanchithasr/6-ways-to-convert-a-string-to-an-array-in-javascript-1cjg
+	typerArray = users.split(',');
+}

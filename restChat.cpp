@@ -26,6 +26,7 @@ string getUserList(map<string, string> const &activeUsers){
 		usernameList += pair.first;
 		usernameList += ", ";
     }
+	usernameList.erase(usernameList.length() - 2);
 	string jsonMessage = "{\"userList\":\""+usernameList+"\"}";
 	return jsonMessage;
 }
@@ -37,7 +38,6 @@ string getUserListMod(map<string, string> const &activeUsers){
 		usernameList += ",";
     }
 	usernameList.erase(usernameList.length() - 1);
-	cout << usernameList << endl;
 	string jsonMessage = "{\"userList\":\""+usernameList+"\"}";
 	return jsonMessage;
 }
@@ -89,14 +89,24 @@ void showTyping(string currentUser , map<string,vector<string>> &messageMap , ma
 	}
 }
 
-//Grab List of People Typing
+//Show ... in the chat for people typing.
 void getTypersList(map<string, string> const &typingMap , map<string,vector<string>> &messageMap , map<string,string> const &isTypingMap){
 	string currentUser;
-	cout << "getTypersList() is running" << currentUser << endl;
     for (auto const &pair: typingMap) {
 		currentUser = pair.first;
 		showTyping(currentUser , messageMap , typingMap , isTypingMap);
     }
+}
+//Return list of people typing
+string getTypersListMod(map<string, string> const &typingMap){
+	string typerList;
+    for (auto const &pair: typingMap) {
+		typerList += pair.first;
+		typerList += ",";
+    }
+	typerList.erase(typerList.length() - 1);
+	string jsonMessage = "{\"typerList\":\""+typerList+"\"}";
+	return jsonMessage;
 }
 
 
@@ -290,6 +300,14 @@ int main(void) {
     res.set_header("Access-Control-Allow-Origin","*");
 	string result;
 	result = getUserListMod(activeUsers);
+	res.set_content(result, "text/json");
+  });
+  
+    //This part of the code will update the user list for the thing at the bottom of the web page
+    svr.Get(R"(/chat/users/typing)", [&](const Request& req, Response& res) {
+    res.set_header("Access-Control-Allow-Origin","*");
+	string result;
+	result = getTypersListMod(typingMap);
 	res.set_content(result, "text/json");
   });
   
