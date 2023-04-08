@@ -1,6 +1,17 @@
 /* Some styles for text */
 h2, h3, p {
     font-family: Verdana, sans-serif;
+    border: 5px solid #f8b739;
+    color: #E6E6FA;
+}
+
+h1 {
+    font-family: Arial, cursive;
+    color: #E6E6FA;
+    border: 5px solid powderblue;
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 30px;
 }
 
 .small {
