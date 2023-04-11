@@ -1,8 +1,13 @@
 /* Some styles for text */
 h2, h3, p {
-    font-family: Verdana, sans-serif;
-    border: 5px solid #f8b739;
-    color: #32174d;
+	color: #FF69B4;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 2em;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	border-bottom: 2px solid #FF69B4;
+	padding-bottom: 5px;
+	margin-top: 30px;
 }
 
 h1 {
