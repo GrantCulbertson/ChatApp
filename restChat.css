@@ -1,11 +1,12 @@
 /* Some styles for text */
 h2, h3, p {
-	color: #FF69B4;
+	color: #FFD700;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 2em;
+	text-shadow: 2px 2px 4px #000000;
 	text-transform: uppercase;
 	letter-spacing: 2px;
-	border-bottom: 2px solid #FF69B4;
+	border-bottom: 2px solid #FFD700;
 	padding-bottom: 5px;
 	margin-top: 30px;
 }
