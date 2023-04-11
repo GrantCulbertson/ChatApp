@@ -36,10 +36,9 @@ h1 {
 .scrollabletextbox {
     background-color: #e6b3ff;
     height: 300px;
-    width: 400px;
-    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-    font-size: 82%;
-    overflow:scroll;
+    font-size: 1.2rem;
+    overflow-y: scroll;
+    padding: 10px;
 }
 
 #drop_zone {
