@@ -6,12 +6,12 @@ h2, h3, p {
 }
 
 h1 {
-    font-family: Arial, cursive;
-    color: #32174d;
-    border: 5px dotted powderblue;
-    padding: 30px;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    color: purple;
+	font-family: cursive;
+	font-size: 3em;
+	text-shadow: 2px 2px 4px #000000;
+	text-align: center;
+	margin-top: 50px;
 }
 
 .small {
