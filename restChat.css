@@ -2,12 +2,12 @@
 h2, h3, p {
     font-family: Verdana, sans-serif;
     border: 5px solid #f8b739;
-    color: #E6E6FA;
+    color: #000000;
 }
 
 h1 {
     font-family: Arial, cursive;
-    color: #E6E6FA;
+    color: #000000;
     border: 5px solid powderblue;
     padding: 30px;
     margin-top: 20px;
