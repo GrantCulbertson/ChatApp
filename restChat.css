@@ -8,7 +8,7 @@ h2, h3, p {
 h1 {
     font-family: Arial, cursive;
     color: #32174d;
-    border: 5px solid powderblue;
+    border: 5px dotted powderblue;
     padding: 30px;
     margin-top: 20px;
     margin-bottom: 30px;
