@@ -1,8 +1,8 @@
 //
 //  namesAPI.cc - a microservice demo program
 //
-// James Skon
-// Kenyon College, 2022
+// Grant Culbertson + Samyak Shrestha
+// Kenyon College, 2023
 //
 
 #include <iostream>

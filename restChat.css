@@ -1,18 +1,5 @@
 /* Some styles for text */
 h2, h3, p {
-    font-family: Verdana, sans-serif;
-    border: 5px solid #f8b739;
-    color: #000000;
-}
-
-h1 {
-    font-family: Arial, cursive;
-    color: #000000;
-    border: 5px solid powderblue;
-    padding: 30px;
-    margin-top: 20px;
-    margin-bottom: 30px;
-
 	color: #FFD700;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 2em;
@@ -25,10 +12,12 @@ h1 {
 }
 
 h1 {
-   font-size: 4rem;
-   font-weight: bold;
-   color: #333;
-   text-shadow: 1px 1px #ccc;
+    color: purple;
+	font-family: cursive;
+	font-size: 3em;
+	border: 5px dotted #FFD700;
+	text-align: center;
+	margin-top: 50px;
 }
 
 .small {
