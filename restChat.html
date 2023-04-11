@@ -30,25 +30,23 @@
       </ul>
       <span id=register>
 	  <!-- Buttons for Register and Login -->
-      <div class="container">
-  <div class="row">
-    <div class="col">
       <form id="register" class="d-flex">
         <input class="form-control me-2" type="text" id="yourname" placeholder="Username" aria-label="User">
         <input class="form-control me-2" type="password" id="yourpass" placeholder="Password" aria-label="User">
-		<button class="btn btn-success me-2" type="button" data-bs-toggle="modal" data-bs-target="#inviteModal">Invite Friend</button>
-        <button class="btn btn-primary me-2" id="login-btn"  type="button">Login</button>
-        <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">Register</button>
+	<button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#inviteModal">Invite Friend</button>
+        <button class="btn btn-outline-success" id="login-btn"  type="button">Login</button>
+        <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">Register</button>
       </form>
-    </div>
-    <div class="col">
+      </span>
+      <span id=leave>
       <form class="d-flex">
-		<button class="btn btn-success me-2" type="button" data-bs-toggle="modal" data-bs-target="#inviteModal">Invite Friend</button>
-        <button class="btn btn-danger" id="leave-btn" type="button">Leave</button>      
+		<button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#inviteModal">Invite Friend</button>
+        <button class="btn btn-outline-success" id="leave-btn" type="button" >Leave</button>      
       </form>
+      </span>
     </div>
-  </div>
-</div>
+  </div
+
 	  
      <!-- Invite Friend Modal -->
 <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
